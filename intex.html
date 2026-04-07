@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Activity Tracker</title>
+
+<style>
+/* CSS Styling */
+body {
+    font-family: Arial;
+    background: #f4f4f4;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+}
+
+#progress {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: white;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: green;
+}
+
+button {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+</style>
+
+</head>
+<body>
+
+<h2>📋 Student Activity Tracker</h2>
+
+<div id="progress">Progress: 0%</div>
+
+<ul id="activityList"></ul>
+
+<script>
+// JavaScript Code
+
+// Activity Data (State)
+let activities = [
+    { name: "Complete HTML", completed: false },
+    { name: "Learn CSS", completed: false },
+    { name: "Practice JavaScript", completed: false }
+];
+
+// Load saved data from Local Storage
+window.onload = function () {
+    let savedData = localStorage.getItem("activities");
+
+    if (savedData) {
+        activities = JSON.parse(savedData);
+    }
+
+    displayActivities();
+};
+
+// Display Activities
+function displayActivities() {
+    let list = document.getElementById("activityList");
+    list.innerHTML = "";
+
+    activities.forEach((activity, index) => {
+        let li = document.createElement("li");
+
+        let text = document.createElement("span");
+        text.innerText = activity.name;
+
+        // Apply completed style
+        if (activity.completed) {
+            text.classList.add("completed");
+        }
+
+        let btn = document.createElement("button");
+        btn.innerText = activity.completed ? "Completed" : "Mark Done";
+
+        btn.onclick = function () {
+            markCompleted(index);
+        };
+
+        li.appendChild(text);
+        li.appendChild(btn);
+
+        list.appendChild(li);
+    });
+
+    updateProgress();
+}
+
+// Mark Activity Completed
+function markCompleted(index) {
+    activities[index].completed = true;
+
+    // Save to Local Storage
+    localStorage.setItem("activities", JSON.stringify(activities));
+
+    displayActivities();
+}
+
+// Update Progress
+function updateProgress() {
+    let completed = activities.filter(a => a.completed).length;
+    let total = activities.length;
+
+    let percent = Math.round((completed / total) * 100);
+
+    let progressText = document.getElementById("progress");
+    progressText.innerText = "Progress: " + percent + "%";
+
+    // Edge case: all completed
+    if (percent === 100) {
+        progressText.innerText += " 🎉 All tasks completed!";
+    }
+}
+</script>
+
+</body>
+</html>
